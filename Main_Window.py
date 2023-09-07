@@ -5,7 +5,6 @@ import customtkinter as ctk
 from PIL import Image, ImageTk
 from Client import connectToServer
 
-import createHost
 import createServer
 import joinServer
 
@@ -77,11 +76,11 @@ def Join_Frame(main_frame_delete):
             joinServer.joinServer(frame1, main_frame, inpIP, sock)
 
 
-def Host_Frame(main_frame_delete):
-    main_frame_delete.destroy()
-    frame1 = ctk.CTkFrame(master=window)
-    frame1.pack(fill="both", expand=1)
-    createHost.createHost(frame1, main_frame)
+# def Host_Frame(main_frame_delete):
+#     main_frame_delete.destroy()
+#     frame1 = ctk.CTkFrame(master=window)
+#     frame1.pack(fill="both", expand=1)
+#     createHost.createHost(frame1, main_frame)
 
 
 window = ctk.CTk()
