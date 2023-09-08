@@ -85,10 +85,10 @@ def Join_Frame(main_frame_delete):
 
 window = ctk.CTk()
 server_image = ImageTk.PhotoImage(
-    Image.open(r"C:\Users\singh\OneDrive\Desktop\server_image.png").resize((200, 200))
+    Image.open(r"Assets\server_image.png").resize((200, 200))
 )
 join_image = ImageTk.PhotoImage(
-    Image.open(r"C:\Users\singh\OneDrive\Desktop\join.png").resize((200, 200))
+    Image.open(r"Assets\join.png").resize((200, 200))
 )
 
 window.title("File Transfer")

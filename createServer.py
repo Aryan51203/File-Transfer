@@ -194,7 +194,10 @@ def createServer(frame, main_window):
             server.send(str(uploadedFiles).encode(FORMAT))
 
     def backButton():
-        server.close()
+        # if connFlag[0]==False:
+        #     sock.close()
+        # else:
+        #     server.close()
         frame.destroy()
         main_window()
 
@@ -205,18 +208,18 @@ def createServer(frame, main_window):
     serverFilesVar = Variable(value=str(uploadedFiles))
 
     upload_image = PIL.ImageTk.PhotoImage(
-        PIL.Image.open(r"C:\Users\singh\OneDrive\Desktop\upload.png").resize((20, 20))
+        PIL.Image.open(r"Assets\upload.png").resize((20, 20))
     )
     download_image = PIL.ImageTk.PhotoImage(
-        PIL.Image.open(r"C:\Users\singh\OneDrive\Desktop\download2.png").resize(
+        PIL.Image.open(r"Assets\download2.png").resize(
             (20, 20)
         )
     )
     remove_image = PIL.ImageTk.PhotoImage(
-        PIL.Image.open(r"C:\Users\singh\OneDrive\Desktop\remove.png").resize((20, 20))
+        PIL.Image.open(r"Assets\remove.png").resize((20, 20))
     )
     back_image = PIL.ImageTk.PhotoImage(
-        PIL.Image.open(r"C:\Users\singh\OneDrive\Desktop\back.png").resize((20, 20))
+        PIL.Image.open(r"Assets\back.png").resize((20, 20))
     )
 
     connectedFlag = StringVar()
