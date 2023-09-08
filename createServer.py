@@ -29,14 +29,14 @@ def convertToSIZE(sen):
 
 
 def removeExtraBytes(sen):
-    flag=False
-  
+    flag = False
+
     # print(sen)
     index = len(sen) - 1
     while sen[index] == 0:
         # print(sen[index])
         index -= 1
-        
+
     sen = sen[: index + 1]
     return sen
 
@@ -101,13 +101,8 @@ def createServer(frame, main_window):
                     with open(filepath, "rb") as f:
                         while packetCount > 0:
                             data = f.read(SIZE)
-                            if len(data) < SIZE:
-                                data += b"\x00" * (SIZE - len(data))
-
                             server.send(data)
                             packetCount -= 1
-
-                        server.send(b"\x00" * SIZE)
 
                 elif msg == "TAKE DATA":
                     fileName, packetCountResponse = eval(
@@ -120,16 +115,10 @@ def createServer(frame, main_window):
                     )
 
                     with open(filepath, "wb") as f:
-                        data = b""
-                        while True:
-                            currData = server.recv(SIZE)
-                            if currData == b"\x00" * SIZE:
-                                break
-                            data += currData
-                        # print(data)
-                        data= data[:-1024] + removeExtraBytes(data[-1024:])
-
-                        f.write(data)
+                        while packetCountResponse > 0:
+                            data = server.recv(SIZE)
+                            f.write(data)
+                            packetCountResponse -= 1
 
     def serverConnected(conn):
         global server
@@ -211,9 +200,7 @@ def createServer(frame, main_window):
         PIL.Image.open(r"Assets\upload.png").resize((20, 20))
     )
     download_image = PIL.ImageTk.PhotoImage(
-        PIL.Image.open(r"Assets\download2.png").resize(
-            (20, 20)
-        )
+        PIL.Image.open(r"Assets\download2.png").resize((20, 20))
     )
     remove_image = PIL.ImageTk.PhotoImage(
         PIL.Image.open(r"Assets\remove.png").resize((20, 20))

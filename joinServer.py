@@ -17,6 +17,7 @@ SIZE = 1024
 FORMAT = "utf-8"
 PORT = 4000
 
+
 def getPacketCount(fpath):
     byte_size = os.stat(fpath).st_size
     packet_count = byte_size // SIZE
@@ -92,13 +93,8 @@ def joinServer(frame, main_window, IP, sock):
                     with open(filepath, "rb") as f:
                         while packetCount > 0:
                             data = f.read(SIZE)
-                            if len(data) < SIZE:
-                                data += b"\x00" * (SIZE - len(data))
-
                             sock.send(data)
                             packetCount -= 1
-
-                        sock.send(b"\x00" * SIZE)
 
                 elif msg == "TAKE DATA":
                     fileName, packetCountResponse = eval(
@@ -111,15 +107,10 @@ def joinServer(frame, main_window, IP, sock):
                     )
 
                     with open(filepath, "wb") as f:
-                        data = b""
-                        while True:
+                        while packetCountResponse > 0:
                             currData = sock.recv(SIZE)
-                            if currData == b"\x00" * SIZE:
-                                break
-                            data += currData
-                        data = removeExtraBytes(data)
-
-                        f.write(data)
+                            f.write(currData)
+                            packetCountResponse -= 1
 
     def appendFilepath(fp):
         if len(uploadedFiles) > 0:
@@ -187,9 +178,7 @@ def joinServer(frame, main_window, IP, sock):
         PIL.Image.open(r"Assets\upload.png").resize((20, 20))
     )
     download_image = PIL.ImageTk.PhotoImage(
-        PIL.Image.open(r"Assets\download2.png").resize(
-            (20, 20)
-        )
+        PIL.Image.open(r"Assets\download2.png").resize((20, 20))
     )
     remove_image = PIL.ImageTk.PhotoImage(
         PIL.Image.open(r"Assets\remove.png").resize((20, 20))
