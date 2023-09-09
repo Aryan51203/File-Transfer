@@ -1,17 +1,134 @@
+import Server
+import os
+import socket
+import threading
 from tkinter import *
-from tkinter import messagebox
-from tkinter import filedialog
-from CTkListbox import *
+from tkinter import filedialog, messagebox
 
 import customtkinter as ctk
-from PIL import Image, ImageTk
+from CTkListbox import *
+
+import PIL.Image
+import PIL.ImageTk
+from Server import *
+
+SIZE = 1024
+FORMAT = "utf-8"
+PORT = 4000
+
+connFlag = [False, 0]
 
 
 def serverLogWindow(frame, main_window, folderpath):
-    dirPathHosted = StringVar()
-    devicesConnected = StringVar()
-    dirPathHosted.set("Folder hosted: "+folderpath)
-    devicesConnected.set("Devices connected: 0")
+    # l=[f for f in os.listdir(folderpath) if os.path.isfile(os.path.join(folderpath, f))]
+    l = []
+
+    IP = socket.gethostbyname(socket.gethostname())
+    ADDR = (IP, PORT)
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind(ADDR)
+    sock.listen()
+
+    devicesConnectedVar = StringVar()
+    devicesConnectedVar.set(f"Devices connected:{connFlag[1]}")
+
+    serverLogs = []
+    serverLogsVar = Variable(value=str(serverLogs))
+
+    serverLogs.append("[STARTING] Server is starting...")
+    serverLogsVar.set(str(serverLogs))
+
+    print("Waiting for connection...")
+    print(f"Share this code: {IP}")
+
+    def checkChanges():
+        l=[]
+        while True:
+            new_l = [
+                f
+                for f in os.listdir(folderpath)
+                if os.path.isfile(os.path.join(folderpath, f))
+            ]
+
+            if l != new_l:
+                l = new_l
+                msg = f"UPDATE%{str(new_l)}"
+                print(msg)
+                server.send(convertToSIZE(msg))
+
+    def serverHandler():
+        while True:
+            conn, addr = sock.accept()
+            connFlag[0] = True
+
+            if conn:
+                serverConnected(conn, addr)
+
+    def serverConnected(conn, addr):
+        global server
+
+        server = conn
+        msg='[NEW CLIENT] : HOST'
+        # server.send(convertToSIZE(msg.encode(FORMAT)))
+        server.send(msg.encode(FORMAT))
+
+        serverLogs.append(f"[NEW CONNECTION]: {addr} Connected")
+        serverLogsVar.set(str(serverLogs))
+
+        clientThread = threading.Thread(target=clientHandlerHost, args=(server, addr))
+        clientThread.start()
+
+        connFlag[1] += 1
+        devicesConnectedVar.set(f"Devices connected:{connFlag[1]}")
+
+        if connFlag[1] == 1:
+            checkChangeThread = threading.Thread(target=checkChanges)
+            checkChangeThread.start()
+
+    def clientHandlerHost(server, addr):
+        while True:
+            msg=server.recv(SIZE)
+            if not msg:
+                continue
+            else:  
+                msg = removeExtraBytes(msg).decode(FORMAT)
+
+                cmd, msg = msg.split("%")
+
+                if cmd == "DOWNLOAD":
+                    filename = msg
+
+                    filepath = os.path.join(folderpath, filename)
+                    packetCount = getPacketCount(filepath)
+
+                    fileData = f'["{filename}", "{packetCount}"]'
+
+                    msgSend = f"TAKE_DATA%{fileData}"
+                    server.send(convertToSIZE(msgSend))
+
+                    with open(filepath, "rb") as f:
+                        while packetCount > 0:
+                            data = f.read(SIZE)
+                            server.send(data)
+                            packetCount -= 1
+
+                elif cmd == "UPLOAD":
+                    filename = msg
+                    filepath = os.path.join(folderpath, filename).replace("\\", "/")
+
+                    packetCountResponse = eval(
+                        removeExtraBytes(server.recv(SIZE)).decode(FORMAT)
+                    )
+
+                    with open(filepath, "wb") as f:
+                        while packetCountResponse > 0:
+                            data = server.recv(SIZE)
+                            f.write(data)
+                            packetCountResponse -= 1
+
+    serverThread = threading.Thread(target=serverHandler)
+    serverThread.start()
 
     lb1 = ctk.CTkLabel(
         frame,
@@ -24,7 +141,7 @@ def serverLogWindow(frame, main_window, folderpath):
 
     lb2 = ctk.CTkLabel(
         frame,
-        textvariable=dirPathHosted,
+        text=f"Share this code to join: {IP}",
         font=("Comic Sans MS bold", 34),
         padx=5,
         pady=5,
@@ -33,15 +150,15 @@ def serverLogWindow(frame, main_window, folderpath):
 
     lb3 = ctk.CTkLabel(
         frame,
-        textvariable=devicesConnected,
+        textvariable=devicesConnectedVar,
         font=("Comic Sans MS bold", 34),
         padx=5,
         pady=5,
     )
     lb3.pack()
 
-    serverLogs = []
-    serverLogsVar = Variable(value=str(serverLogs))
-
-    listbox1 = CTkListbox(frame, listvariable=serverLogsVar, width=300, height=400)
+    listbox1 = CTkListbox(frame, listvariable=serverLogsVar, height=400)
     listbox1.pack()
+
+    btn1 = ctk.CTkButton(frame, text="Close server")
+    btn1.pack()
