@@ -8,6 +8,7 @@ from Client import connectToServer
 
 import createServer
 import joinServer
+import hostServer
 
 def selectFolder(inp):
     root = Tk()
@@ -87,6 +88,15 @@ def Join_Frame(main_frame_delete):
 
 
 def Host_Frame(main_frame_delete):
+
+    def createHost():
+        root.destroy()
+        main_frame_delete.destroy()
+        frame1 = ctk.CTkFrame(master=window)
+        frame1.pack(fill="both", expand=1)
+        fp=inputGot.get()
+        hostServer.serverLogWindow(frame1, main_frame,fp)
+
     root=ctk.CTkToplevel(window)
     root.geometry("400x400")
     root.title("Host Server")
@@ -116,7 +126,7 @@ def Host_Frame(main_frame_delete):
     btn2 = ctk.CTkButton(
         master=root,
         text="CREATE",
-        font=("Comic Sans MS", 22),
+        font=("Comic Sans MS", 22),command=createHost,
         # compound=BOTTOM,
     )
     btn2.pack()
@@ -132,10 +142,7 @@ def Host_Frame(main_frame_delete):
 
     root.mainloop()
 
-    # main_frame_delete.destroy()
-    # frame1 = ctk.CTkFrame(master=window)
-    # frame1.pack(fill="both", expand=1)
-    # createHost.createHost(frame1, main_frame)
+   
 
 
 window = ctk.CTk()
