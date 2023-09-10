@@ -42,7 +42,7 @@ def serverLogWindow(frame, main_window, folderpath):
     print("Waiting for connection...")
     print(f"Share this code: {IP}")
 
-    def checkChanges():
+    def checkChanges(server, addr):
         l = []
         while True:
             new_l = [
@@ -50,17 +50,16 @@ def serverLogWindow(frame, main_window, folderpath):
                 for f in os.listdir(folderpath)
                 if os.path.isfile(os.path.join(folderpath, f))
             ]
-
-            if l != new_l:
-                l = new_l
-                msg = f"UPDATE%{str(new_l)}"
-                # print(msg)
-                server.send(convertToSIZE(msg))
+            if connFlag[0] == True or l != new_l:
+                    l = new_l
+                    msg = f"UPDATE%{str(new_l)}"
+                    # print(msg)
+                    server.send(convertToSIZE(msg))
+                    connFlag[0]=False
 
     def serverHandler():
         while True:
             conn, addr = sock.accept()
-            connFlag[0] = True
 
             if conn:
                 serverConnected(conn, addr)
@@ -82,9 +81,9 @@ def serverLogWindow(frame, main_window, folderpath):
         connFlag[1] += 1
         devicesConnectedVar.set(f"Devices connected:{connFlag[1]}")
 
-        if connFlag[1] == 1:
-            checkChangeThread = threading.Thread(target=checkChanges)
-            checkChangeThread.start()
+        # if connFlag[1] == 1:
+        checkChangeThread = threading.Thread(target=checkChanges, args=(server, addr))
+        checkChangeThread.start()
 
     def clientHandlerHost(server, addr):
         new_l = [
@@ -95,7 +94,7 @@ def serverLogWindow(frame, main_window, folderpath):
 
         msg = f"UPDATE%{str(new_l)}"
         server.send(convertToSIZE(msg))
-        
+
         while True:
             msg = server.recv(SIZE)
             if not msg:
@@ -121,7 +120,7 @@ def serverLogWindow(frame, main_window, folderpath):
                             data = f.read(SIZE)
                             server.send(data)
                             packetCount -= 1
-                    
+
                     serverLogs.append(f"[DOWNLOADED]: {filename} downloaded by {addr}")
                     serverLogsVar.set(str(serverLogs))
 
@@ -138,7 +137,9 @@ def serverLogWindow(frame, main_window, folderpath):
                             data = server.recv(SIZE)
                             f.write(data)
                             packetCountResponse -= 1
-                    
+
+                    connFlag[0] = True
+
                     serverLogs.append(f"[UPLOADED]: {filename} uploaded by {addr}")
                     serverLogsVar.set(str(serverLogs))
 
@@ -147,6 +148,7 @@ def serverLogWindow(frame, main_window, folderpath):
                     filepath = os.path.join(folderpath, filename).replace("\\", "/")
 
                     os.remove(filepath)
+                    connFlag[0] = True
                     serverLogs.append(f"[DELETED]: {filename} deleted by {addr}")
                     serverLogsVar.set(str(serverLogs))
 
@@ -173,7 +175,7 @@ def serverLogWindow(frame, main_window, folderpath):
         padx=5,
         pady=5,
     )
-    lb2.place(x=10,y=50)
+    lb2.place(x=10, y=50)
 
     lb3 = ctk.CTkLabel(
         frame,
@@ -182,10 +184,10 @@ def serverLogWindow(frame, main_window, folderpath):
         padx=5,
         pady=5,
     )
-    lb3.place(x=790,y=50)
+    lb3.place(x=790, y=50)
 
-    listbox1 = CTkListbox(frame, listvariable=serverLogsVar, height=400,width=950)
-    listbox1.place(x=10,y=100)
+    listbox1 = CTkListbox(frame, listvariable=serverLogsVar, height=400, width=950)
+    listbox1.place(x=10, y=100)
 
-    btn1 = ctk.CTkButton(frame, text="Shut Down Server",command=shutDownServerButton)
-    btn1.place(x=450,y=550)
+    btn1 = ctk.CTkButton(frame, text="Shut Down Server", command=shutDownServerButton)
+    btn1.place(x=450, y=550)
