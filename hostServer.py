@@ -94,7 +94,6 @@ def serverLogWindow(frame, main_window, folderpath):
         ]
 
         msg = f"UPDATE%{str(new_l)}"
-        # print(msg)
         server.send(convertToSIZE(msg))
         
         while True:
@@ -122,6 +121,9 @@ def serverLogWindow(frame, main_window, folderpath):
                             data = f.read(SIZE)
                             server.send(data)
                             packetCount -= 1
+                    
+                    serverLogs.append(f"[DOWNLOADED]: {filename} downloaded by {addr}")
+                    serverLogsVar.set(str(serverLogs))
 
                 elif cmd == "UPLOAD":
                     filename = msg
@@ -136,15 +138,18 @@ def serverLogWindow(frame, main_window, folderpath):
                             data = server.recv(SIZE)
                             f.write(data)
                             packetCountResponse -= 1
+                    
+                    serverLogs.append(f"[UPLOADED]: {filename} uploaded by {addr}")
+                    serverLogsVar.set(str(serverLogs))
 
                 elif cmd == "DELETE":
                     filename = msg
                     filepath = os.path.join(folderpath, filename).replace("\\", "/")
 
                     os.remove(filepath)
-                    serverLogs.append(f"[DELETED]: {filename}")
+                    serverLogs.append(f"[DELETED]: {filename} deleted by {addr}")
                     serverLogsVar.set(str(serverLogs))
-                                    
+
     def shutDownServerButton():
         frame.destroy()
         main_window()
