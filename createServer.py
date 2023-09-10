@@ -126,6 +126,8 @@ def createServer(frame, main_window):
         connectedFlag.set("Connected")
         lb1.configure(bg_color="green")
 
+        server.send('ONE_ONE_SERVER'.encode(FORMAT))
+
         serverListener = threading.Thread(target=incomingMessageHandler)
         serverListener.start()
 
@@ -183,10 +185,6 @@ def createServer(frame, main_window):
             server.send(str(uploadedFiles).encode(FORMAT))
 
     def backButton():
-        # if connFlag[0]==False:
-        #     sock.close()
-        # else:
-        #     server.close()
         frame.destroy()
         main_window()
 

@@ -9,6 +9,23 @@ FORMAT = "utf-8"
 PORT = 4000
 DISCONNECT_MESSAGE = "!Disconnect!"
 
+
+def convertToSIZE(sen):
+    sen = sen.encode(FORMAT)
+    sen += b"\x00" * (SIZE - len(sen))
+    return sen
+
+
+def removeExtraBytes(sen):
+    index = len(sen) - 1
+
+    while sen[index] == 0:
+        index -= 1
+
+    sen = sen[: index + 1]
+    return sen
+
+
 def getPacketCount(fpath):
     byte_size = os.stat(fpath).st_size
     packet_count = byte_size // SIZE
@@ -17,6 +34,7 @@ def getPacketCount(fpath):
         packet_count += 1
 
     return packet_count
+
 
 def selectFile():
     root = Tk()
@@ -34,6 +52,7 @@ def selectFolder():
     fp = filedialog.askdirectory()
     root.destroy()  # Destroy the root window when folder selected.
     return fp
+
 
 def startServer(handle_Client_Function):
     IP = socket.gethostbyname(socket.gethostname())
