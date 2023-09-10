@@ -15,16 +15,6 @@ SIZE = 1024
 FORMAT = "utf-8"
 
 
-def selectFolder(inp):
-    root = Tk()
-    root.attributes("-topmost", True)  # Display the dialog in the foreground.
-    root.iconify()  # Hide the little window.
-    fp = filedialog.askdirectory()
-    root.destroy()  # Destroy the root window when folder selected.
-
-    inp.set(fp)
-
-
 def main_frame():
     frame = ctk.CTkFrame(master=window)
     frame.pack(fill="both", expand=1)
@@ -46,7 +36,7 @@ def main_frame():
         command=lambda: Send_Frame(frame),
         compound=BOTTOM,
     )
-    btn1.place(x=250, y=200)
+    btn1.place(x=150, y=200)
 
     btn2 = ctk.CTkButton(
         master=frame,
@@ -56,15 +46,17 @@ def main_frame():
         command=lambda: Join_Frame(frame),
         compound=BOTTOM,
     )
-    btn2.place(x=550, y=200)
+    btn2.place(x=400, y=200)
 
     btn3 = ctk.CTkButton(
         master=frame,
-        text="H0ST A FILE OR FOLDER",
+        text="H0ST A FOLDER",
+        image=host_image,
         font=("Comic Sans MS", 22),
         command=lambda: Host_Frame(frame),
+        compound=BOTTOM,
     )
-    btn3.place(x=650, y=250)
+    btn3.place(x=650, y=200)
 
     btn4 = ctk.CTkButton(
         master=frame, text="EXIT", font=("Comic Sans MS", 22), command=window.destroy
@@ -117,49 +109,63 @@ def Host_Frame(main_frame_delete):
         fp = inputGot.get()
         hostServer.serverLogWindow(frame1, main_frame, fp)
 
-    root = ctk.CTkToplevel(window)
-    root.geometry("400x400")
+    def selectFolder(inp):
+        root.attributes("-topmost", False)
+
+        root1 = Tk()
+        root1.attributes("-topmost", True)  # Display the dialog in the foreground.
+        root1.iconify()  # Hide the little window.
+        fp = filedialog.askdirectory()
+        root1.destroy()  # Destroy the root window when folder selected.
+        root.attributes("-topmost", True)
+        inp.set(fp)
+
+    root = ctk.CTkToplevel()
+    root.geometry("400x190+1000+500")
     root.title("Host Server")
+    root.attributes("-topmost", True)  # Display the dialog in the foreground.
 
     lb1 = ctk.CTkLabel(
         root,
-        text="Create Server",
-        font=("Comic Sans MS bold", 34),
+        text="SELECT FOLDER",
+        font=("Comic Sans MS bold", 20),
         padx=5,
         pady=5,
     )
-    lb1.pack()
+    lb1.place(x=100, y=10)
 
     inputGot = StringVar()
-    inp1 = ctk.CTkEntry(master=root, textvariable=inputGot)
-    inp1.pack()
+    inp1 = ctk.CTkEntry(
+        master=root, textvariable=inputGot, font=("Comic Sans MS", 12), width=300
+    )
+    inp1.place(x=10, y=60)
 
     btn1 = ctk.CTkButton(
         master=root,
         text="BROWSE",
-        font=("Comic Sans MS", 22),
+        font=("Comic Sans MS", 12),
         command=lambda: selectFolder(inputGot),
-        # compound=BOTTOM,
+        width=20,
     )
-    btn1.pack()
+    btn1.place(x=320, y=60)
 
     btn2 = ctk.CTkButton(
         master=root,
         text="CREATE",
-        font=("Comic Sans MS", 22),
+        font=("Comic Sans MS", 18),
+        width=130,
         command=createHost,
-        # compound=BOTTOM,
     )
-    btn2.pack()
+    btn2.place(x=30, y=120)
 
     btn3 = ctk.CTkButton(
         master=root,
         text="CANCEL",
-        font=("Comic Sans MS", 22),
+        font=("Comic Sans MS", 18),
         command=root.destroy,
-        # compound=BOTTOM,
+        width=130,
     )
-    btn3.pack()
+    btn3.place(x=200, y=120)
 
     root.mainloop()
 
@@ -169,6 +175,7 @@ server_image = ImageTk.PhotoImage(
     Image.open(r"Assets\server_image.png").resize((200, 200))
 )
 join_image = ImageTk.PhotoImage(Image.open(r"Assets\join.png").resize((200, 200)))
+host_image = ImageTk.PhotoImage(Image.open(r"Assets\host.jpg").resize((200, 200)))
 
 window.title("File Transfer")
 window.resizable(0, 0)

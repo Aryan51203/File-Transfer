@@ -27,7 +27,7 @@ def hostHandler(frame, main_window, IP, client):
                 msg = removeExtraBytes(msg)
                 cmd, msg = msg.decode(FORMAT).split("%")
                 # print(cmd, msg)
-                
+
                 if cmd == "UPDATE":
                     availableFiles = eval(msg)
                     serverFilesVar.set(str(availableFiles))

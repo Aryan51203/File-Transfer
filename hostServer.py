@@ -43,7 +43,7 @@ def serverLogWindow(frame, main_window, folderpath):
     print(f"Share this code: {IP}")
 
     def checkChanges():
-        l=[]
+        l = []
         while True:
             new_l = [
                 f
@@ -54,7 +54,7 @@ def serverLogWindow(frame, main_window, folderpath):
             if l != new_l:
                 l = new_l
                 msg = f"UPDATE%{str(new_l)}"
-                print(msg)
+                # print(msg)
                 server.send(convertToSIZE(msg))
 
     def serverHandler():
@@ -69,7 +69,7 @@ def serverLogWindow(frame, main_window, folderpath):
         global server
 
         server = conn
-        msg='[NEW CLIENT] : HOST'
+        msg = "[NEW CLIENT] : HOST"
         # server.send(convertToSIZE(msg.encode(FORMAT)))
         server.send(msg.encode(FORMAT))
 
@@ -87,11 +87,21 @@ def serverLogWindow(frame, main_window, folderpath):
             checkChangeThread.start()
 
     def clientHandlerHost(server, addr):
+        new_l = [
+            f
+            for f in os.listdir(folderpath)
+            if os.path.isfile(os.path.join(folderpath, f))
+        ]
+
+        msg = f"UPDATE%{str(new_l)}"
+        # print(msg)
+        server.send(convertToSIZE(msg))
+        
         while True:
-            msg=server.recv(SIZE)
+            msg = server.recv(SIZE)
             if not msg:
                 continue
-            else:  
+            else:
                 msg = removeExtraBytes(msg).decode(FORMAT)
 
                 cmd, msg = msg.split("%")
