@@ -137,13 +137,25 @@ def serverLogWindow(frame, main_window, folderpath):
                             f.write(data)
                             packetCountResponse -= 1
 
+                elif cmd == "DELETE":
+                    filename = msg
+                    filepath = os.path.join(folderpath, filename).replace("\\", "/")
+
+                    os.remove(filepath)
+                    serverLogs.append(f"[DELETED]: {filename}")
+                    serverLogsVar.set(str(serverLogs))
+                                    
+    def shutDownServerButton():
+        frame.destroy()
+        main_window()
+
     serverThread = threading.Thread(target=serverHandler)
     serverThread.start()
 
     lb1 = ctk.CTkLabel(
         frame,
         text="SERVER LOGS",
-        font=("Comic Sans MS bold", 34),
+        font=("Comic Sans MS bold", 20),
         padx=5,
         pady=5,
     )
@@ -152,23 +164,23 @@ def serverLogWindow(frame, main_window, folderpath):
     lb2 = ctk.CTkLabel(
         frame,
         text=f"Share this code to join: {IP}",
-        font=("Comic Sans MS bold", 34),
+        font=("Comic Sans MS bold", 18),
         padx=5,
         pady=5,
     )
-    lb2.pack()
+    lb2.place(x=10,y=50)
 
     lb3 = ctk.CTkLabel(
         frame,
         textvariable=devicesConnectedVar,
-        font=("Comic Sans MS bold", 34),
+        font=("Comic Sans MS bold", 18),
         padx=5,
         pady=5,
     )
-    lb3.pack()
+    lb3.place(x=790,y=50)
 
-    listbox1 = CTkListbox(frame, listvariable=serverLogsVar, height=400)
-    listbox1.pack()
+    listbox1 = CTkListbox(frame, listvariable=serverLogsVar, height=400,width=950)
+    listbox1.place(x=10,y=100)
 
-    btn1 = ctk.CTkButton(frame, text="Close server")
-    btn1.pack()
+    btn1 = ctk.CTkButton(frame, text="Shut Down Server",command=shutDownServerButton)
+    btn1.place(x=450,y=550)

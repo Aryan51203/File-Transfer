@@ -70,6 +70,13 @@ def hostHandler(frame, main_window, IP, client):
 
     def deleteFile():
         filename = listbox2.get()
+
+        if not filename:
+            messagebox.showerror("ERROR", "No file selected")
+        else:
+            msg=f'DELETE%{filename}'
+            client.send(convertToSIZE(msg))
+
         print("Deleting")
 
     def backButton():
@@ -109,8 +116,8 @@ def hostHandler(frame, main_window, IP, client):
 
     x_coll = 800
 
-    listbox2 = CTkListbox(frame, listvariable=serverFilesVar, width=300, height=400)
-    listbox2.place(x=425, y=90)
+    listbox2 = CTkListbox(frame, listvariable=serverFilesVar, width=600, height=400)
+    listbox2.place(x=50, y=90)
 
     btn1 = ctk.CTkButton(
         master=frame,
