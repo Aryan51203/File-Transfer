@@ -1,7 +1,6 @@
 import os
 import socket
 import threading
-import platform
 from tkinter import *
 from tkinter import filedialog, messagebox
 
@@ -30,12 +29,8 @@ def convertToSIZE(sen):
 
 
 def removeExtraBytes(sen):
-    flag = False
-
-    # print(sen)
     index = len(sen) - 1
     while sen[index] == 0:
-        # print(sen[index])
         index -= 1
 
     sen = sen[: index + 1]
@@ -56,7 +51,7 @@ def createServer(frame, main_window):
 
     def serverHandler():
         while True:
-            conn, addr = sock.accept()
+            conn = sock.accept()
             connFlag[0] = True
 
             if conn:
