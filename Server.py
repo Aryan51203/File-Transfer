@@ -55,7 +55,7 @@ def selectFolder():
 
 
 def startServer(handle_Client_Function):
-    IP = socket.gethostbyname(socket.gethostname())
+    IP = socket.gethostbyname(socket.gethostname()+".local")
     ADDR = (IP, PORT)
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

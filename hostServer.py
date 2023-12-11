@@ -23,7 +23,7 @@ def serverLogWindow(frame, main_window, folderpath):
     # l=[f for f in os.listdir(folderpath) if os.path.isfile(os.path.join(folderpath, f))]
     l = []
 
-    IP = socket.gethostbyname(socket.gethostname())
+    IP = socket.gethostbyname(socket.gethostname() + ".local")
     ADDR = (IP, PORT)
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -51,11 +51,11 @@ def serverLogWindow(frame, main_window, folderpath):
                 if os.path.isfile(os.path.join(folderpath, f))
             ]
             if connFlag[0] == True or l != new_l:
-                    l = new_l
-                    msg = f"UPDATE%{str(new_l)}"
-                    # print(msg)
-                    server.send(convertToSIZE(msg))
-                    connFlag[0]=False
+                l = new_l
+                msg = f"UPDATE%{str(new_l)}"
+                # print(msg)
+                server.send(convertToSIZE(msg))
+                connFlag[0] = False
 
     def serverHandler():
         while True:

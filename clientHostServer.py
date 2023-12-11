@@ -74,7 +74,7 @@ def hostHandler(frame, main_window, IP, client):
         if not filename:
             messagebox.showerror("ERROR", "No file selected")
         else:
-            msg=f'DELETE%{filename}'
+            msg = f"DELETE%{filename}"
             client.send(convertToSIZE(msg))
 
         print("Deleting")
@@ -93,16 +93,16 @@ def hostHandler(frame, main_window, IP, client):
     serverFilesVar = Variable(value=str(availableFiles))
 
     upload_image = PIL.ImageTk.PhotoImage(
-        PIL.Image.open(r"Assets\upload.png").resize((20, 20))
+        PIL.Image.open(os.path.join("Assets", "upload.png")).resize((20, 20))
     )
     download_image = PIL.ImageTk.PhotoImage(
-        PIL.Image.open(r"Assets\download2.png").resize((20, 20))
+        PIL.Image.open(os.path.join("Assets", "download.png")).resize((20, 20))
     )
     remove_image = PIL.ImageTk.PhotoImage(
-        PIL.Image.open(r"Assets\remove.png").resize((20, 20))
+        PIL.Image.open(os.path.join("Assets", "remove.png")).resize((20, 20))
     )
     back_image = PIL.ImageTk.PhotoImage(
-        PIL.Image.open(r"Assets\back.png").resize((20, 20))
+        PIL.Image.open(os.path.join("Assets", "back.png")).resize((20, 20))
     )
 
     lb2 = ctk.CTkLabel(

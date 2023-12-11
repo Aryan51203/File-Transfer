@@ -1,6 +1,7 @@
 import os
 import socket
 import threading
+import platform
 from tkinter import *
 from tkinter import filedialog, messagebox
 
@@ -44,7 +45,7 @@ def removeExtraBytes(sen):
 def createServer(frame, main_window):
     uploadedFiles = []
 
-    IP = socket.gethostbyname(socket.gethostname())
+    IP = socket.gethostbyname(socket.gethostname() + ".local")
     ADDR = (IP, PORT)
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -126,7 +127,7 @@ def createServer(frame, main_window):
         connectedFlag.set("Connected")
         lb1.configure(bg_color="green")
 
-        server.send('ONE_ONE_SERVER'.encode(FORMAT))
+        server.send("ONE_ONE_SERVER".encode(FORMAT))
 
         serverListener = threading.Thread(target=incomingMessageHandler)
         serverListener.start()
@@ -195,16 +196,16 @@ def createServer(frame, main_window):
     serverFilesVar = Variable(value=str(uploadedFiles))
 
     upload_image = PIL.ImageTk.PhotoImage(
-        PIL.Image.open(r"Assets\upload.png").resize((20, 20))
+        PIL.Image.open(os.path.join("Assets", "upload.png")).resize((20, 20))
     )
     download_image = PIL.ImageTk.PhotoImage(
-        PIL.Image.open(r"Assets\download2.png").resize((20, 20))
+        PIL.Image.open(os.path.join("Assets", "download.png")).resize((20, 20))
     )
     remove_image = PIL.ImageTk.PhotoImage(
-        PIL.Image.open(r"Assets\remove.png").resize((20, 20))
+        PIL.Image.open(os.path.join("Assets", "remove.png")).resize((20, 20))
     )
     back_image = PIL.ImageTk.PhotoImage(
-        PIL.Image.open(r"Assets\back.png").resize((20, 20))
+        PIL.Image.open(os.path.join("Assets", "back.png")).resize((20, 20))
     )
 
     connectedFlag = StringVar()

@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 from tkinter import filedialog
+import os
 
 import customtkinter as ctk
 from PIL import Image, ImageTk
@@ -171,11 +172,18 @@ def Host_Frame(main_frame_delete):
 
 
 window = ctk.CTk()
-server_image = ImageTk.PhotoImage(
-    Image.open(r"Assets\server_image.png").resize((200, 200))
+
+server_image = ctk.CTkImage(
+    light_image=Image.open(os.path.join("Assets", "server_image.png")), size=(200, 200)
 )
-join_image = ImageTk.PhotoImage(Image.open(r"Assets\join.png").resize((200, 200)))
-host_image = ImageTk.PhotoImage(Image.open(r"Assets\host.jpg").resize((200, 200)))
+
+join_image = ctk.CTkImage(
+    light_image=Image.open(os.path.join("Assets", "join.png")), size=(200, 200)
+)
+
+host_image = ctk.CTkImage(
+    light_image=Image.open(os.path.join("Assets", "host.jpg")), size=(200, 200)
+)
 
 window.title("File Transfer")
 window.resizable(0, 0)
